@@ -39,5 +39,46 @@
  *   //      text: "I love this song", wordCount: 4, sentiment: "love" }
  */
 export function parseWhatsAppMessage(message) {
-  // Your code here
+  if (typeof message !== "string" || !message.includes("-") || !message.includes(":")) {
+    return null
+  }
+
+  let comma = message.indexOf(",")
+  let dash = message.indexOf(" - ")
+  let colon = message.indexOf(": ", dash)  // Search for ": " AFTER the dash
+
+  // If ": " is not found after the sender, return null
+  if (colon === -1) {
+    return null
+  }
+
+  let date = message.slice(0, comma)
+  let time = message.slice(comma + 2, dash)
+  let sender = message.slice(dash + 3, colon)
+  let mes = message.slice(colon + 2).trim()
+
+  let split = mes.split(" ")
+  let result = split.map((word, index) => {
+    if (index === 0) {
+      return word.charAt(0).toUpperCase() + word.slice(1).toLowerCase();
+    }
+    return word.toLowerCase();
+  });
+
+  let filter = result.length
+
+  let sentiment = "neutral"
+  let lowerMessage = mes.toLowerCase()
+
+  let funnyEmojiPattern = /[\u{1F602}\u{1F923}\u{1F604}\u{1F606}]/u
+  let loveEmojiPattern = /[\u{2764}\u{1F495}\u{1F496}\u{1F497}\u{1F493}]/u
+
+  if (lowerMessage.includes("haha") || message.includes(":)") || funnyEmojiPattern.test(message)) {
+    sentiment = "funny"
+  }
+  else if (lowerMessage.includes("love") || lowerMessage.includes("pyaar") || loveEmojiPattern.test(message)) {
+    sentiment = "love"
+  }
+
+  return { date: date, time: time, sender: sender, text: mes, wordCount: filter, sentiment: sentiment }
 }

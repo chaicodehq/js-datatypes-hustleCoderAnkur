@@ -42,5 +42,33 @@
  *   // => "INVALID PASS"
  */
 export function generateLocalPass(passenger) {
-  // Your code here
+
+  if (
+    typeof passenger !== "object" ||
+    passenger === null || !passenger.name ||
+    !passenger.from || !passenger.to ||
+    !passenger.classType ||
+    (!passenger.classType.match(/first/gi) && !passenger.classType.match(/second/gi)) 
+  ) {
+    return "INVALID PASS"
+  }
+
+  let user = passenger.name.toUpperCase()
+
+  let from = passenger.from.split(' ')
+    .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()).join(' ')
+
+  let to = passenger.to.split(' ')
+    .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()).join(' ')
+
+  let classType = passenger.classType.toUpperCase()
+  const PASSID = classType.slice(0, 1).toUpperCase() + passenger.from.slice(0, 3).toUpperCase() + passenger.to.slice(0, 3).toUpperCase()
+
+  return `MUMBAI LOCAL PASS
+---
+Name: ${user}
+From: ${from}
+To: ${to}
+Class: ${classType}
+Pass ID: ${PASSID}`
 }
